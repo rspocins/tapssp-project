@@ -1,0 +1,460 @@
+use mysql::*;
+use mysql::prelude::*;
+// removed unused imports
+
+
+
+#[derive(Debug, PartialEq, Eq)]
+struct Book {
+    title: String,
+    path: String,
+    history: bool,
+    fiction: bool,
+    education: bool,
+}
+
+
+pub(crate) fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
+    let url = "mysql://root:Spoc979899))@localhost:3306/rustdb";
+    let pool = Pool::new(url)?;
+
+
+    let mut conn = pool.get_conn()?;
+
+    // drop the table if it exists to avoid error when it doesn't
+    conn.query_drop("DROP TABLE IF EXISTS library")?;
+ 
+    //   Let's create a table for payments.
+      conn.query_drop(
+         r"CREATE  TABLE library  (
+             Title VARCHAR(255) not null PRIMARY KEY,
+             Path VARCHAR(1024) not null,
+             History boolean not null default false,
+             Fiction boolean not null default false,
+             Education boolean not null default false);")?;
+    
+
+
+    let books: Vec<Book> = load_books();
+
+
+     // Now let's insert books to the database
+    conn.exec_batch(
+        r"INSERT INTO library (Title,Path,History,Fiction,Education)
+          VALUES (:title, :path, :history, :fiction, :education)",
+        books.iter().map(|b| params! {
+            "title" => &b.title,
+            "path" => &b.path,
+            "history" => b.history,
+            "fiction" => b.fiction,
+            "education" => b.education,
+        })
+    )?;
+
+    // let selected_books = conn.query_map(
+    //         "SELECT Title, Path, History, Fiction, Education from library",
+    //         |(title, path, history, fiction, education)| {
+    //             Book { title, path, history, fiction, education }
+    //         },
+    //     )?;
+
+    //     assert_eq!(selected_books, books);
+
+    //let selected_book = conn.query_first_opt("SELECT path from library where title = 'advances-in-lockpicking'",)?;
+    //print!("{:?}", selected_book);  
+    // Fetch single Path by Title using exec_first and a 1-tuple row type
+    let path_opt: Option<(String,)> = conn.exec_first(
+        "SELECT Path FROM library WHERE Title = :title",
+        params! { "title" => "advances-in-lockpicking" },
+    )?;
+
+    let path_str = match path_opt.clone() {
+    Some(q) => q,
+    None => {
+        eprintln!("No path found for title '{}'", String::from("test"));
+        return Ok(()); // or continue / return Err(...)
+    }
+};
+    println!("{:?}", path_str.0);
+
+    Ok(())
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+fn load_books() -> Vec<Book> {
+    let base_path = "C:/Users/Administrator/Desktop/BOS/OEBPS/Text/";
+
+  let books: Vec<Book> = vec![
+Book { title: "x16-accords-of-madness6".into(), path: format!("{}x16-accords-of-madness6.html", base_path), history: true, fiction: false, education: false },
+Book { title: "x16-accords-of-madness9".into(), path: format!("{}x16-accords-of-madness9.html", base_path), history: false, fiction: false, education: false },
+Book { title: "x16-accords-of-madness12".into(), path: format!("{}x16-accords-of-madness12.html", base_path), history: false, fiction: true, education: false },
+Book { title: "x292001".into(), path: format!("{}x292001.html", base_path), history: false, fiction: false, education: false },
+Book { title: "x292002".into(), path: format!("{}x292002.html", base_path), history: false, fiction: false, education: false },
+Book { title: "x292003".into(), path: format!("{}x292003.html", base_path), history: false, fiction: true, education: false },
+Book { title: "x292004".into(), path: format!("{}x292004.html", base_path), history: false, fiction: false, education: false },
+Book { title: "x292005".into(), path: format!("{}x292005.html", base_path), history: false, fiction: false, education: false },
+Book { title: "x292006".into(), path: format!("{}x292006.html", base_path), history: false, fiction: false, education: true },
+Book { title: "x292007".into(), path: format!("{}x292007.html", base_path), history: false, fiction: false, education: false },
+Book { title: "x292007x".into(), path: format!("{}x292007x.html", base_path), history: false, fiction: false, education: false },
+Book { title: "x292008".into(), path: format!("{}x292008.html", base_path), history: false, fiction: false, education: false },
+Book { title: "x292009".into(), path: format!("{}x292009.html", base_path), history: false, fiction: false, education: false },
+Book { title: "x292010".into(), path: format!("{}x292010.html", base_path), history: true, fiction: false, education: false },
+Book { title: "x292011".into(), path: format!("{}x292011.html", base_path), history: false, fiction: false, education: false },
+Book { title: "x292012".into(), path: format!("{}x292012.html", base_path), history: false, fiction: false, education: false },
+Book { title: "accounting-of-the-elder-scrolls".into(), path: format!("{}accounting-of-the-elder-scrolls.html", base_path), history: false, fiction: false, education: false },
+Book { title: "adabala".into(), path: format!("{}adabala.html", base_path), history: false, fiction: false, education: false },
+Book { title: "advances-in-lockpicking".into(), path: format!("{}advances-in-lockpicking.html", base_path), history: false, fiction: false, education: false },
+Book { title: "ahzirr-trajijazaeri".into(), path: format!("{}ahzirr-trajijazaeri.html", base_path), history: true, fiction: false, education: false },
+Book { title: "alduin-is-real".into(), path: format!("{}alduin-is-real.html", base_path), history: false, fiction: false, education: false },
+Book { title: "amongst-the-draugr".into(), path: format!("{}amongst-the-draugr.html", base_path), history: false, fiction: false, education: false },
+Book { title: "amulet-of-kings".into(), path: format!("{}amulet-of-kings.html", base_path), history: false, fiction: true, education: false },
+Book { title: "ancestors-and-the-dunmer".into(), path: format!("{}ancestors-and-the-dunmer.html", base_path), history: false, fiction: false, education: false },
+Book { title: "apprentices-assistant".into(), path: format!("{}apprentices-assistant.html", base_path), history: false, fiction: false, education: false },
+Book { title: "arcana-restored".into(), path: format!("{}arcana-restored.html", base_path), history: false, fiction: false, education: true },
+Book { title: "arcturian-heresy".into(), path: format!("{}arcturian-heresy.html", base_path), history: false, fiction: true, education: false },
+Book { title: "argonian-account1".into(), path: format!("{}argonian-account1.html", base_path), history: true, fiction: false, education: false },
+Book { title: "argonian-account2".into(), path: format!("{}argonian-account2.html", base_path), history: true, fiction: false, education: false },
+Book { title: "argonian-account3".into(), path: format!("{}argonian-account3.html", base_path), history: true, fiction: false, education: false },
+Book { title: "argonian-account4".into(), path: format!("{}argonian-account4.html", base_path), history: true, fiction: false, education: false },
+Book { title: "armorers-challenge".into(), path: format!("{}armorers-challenge.html", base_path), history: false, fiction: false, education: false },
+Book { title: "art-of-war-magic".into(), path: format!("{}art-of-war-magic.html", base_path), history: false, fiction: false, education: false },
+Book { title: "battle-of-red-mountain".into(), path: format!("{}battle-of-red-mountain.html", base_path), history: false, fiction: false, education: false },
+Book { title: "battle-of-sancre-tor".into(), path: format!("{}battle-of-sancre-tor.html", base_path), history: true, fiction: false, education: false },
+Book { title: "bear-of-markarth".into(), path: format!("{}bear-of-markarth.html", base_path), history: false, fiction: false, education: false },
+Book { title: "beggar-prince".into(), path: format!("{}beggar-prince.html", base_path), history: false, fiction: false, education: false },
+Book { title: "biography-of-barenziah1".into(), path: format!("{}biography-of-barenziah1.html", base_path), history: false, fiction: true, education: false },
+Book { title: "biography-of-barenziah2".into(), path: format!("{}biography-of-barenziah2.html", base_path), history: false, fiction: false, education: false },
+Book { title: "biography-of-barenziah3".into(), path: format!("{}biography-of-barenziah3.html", base_path), history: false, fiction: false, education: false },
+Book { title: "biography-of-the-wolf-queen".into(), path: format!("{}biography-of-the-wolf-queen.html", base_path), history: false, fiction: false, education: true },
+Book { title: "black-arrow1".into(), path: format!("{}black-arrow1.html", base_path), history: false, fiction: false, education: false },
+Book { title: "black-arrow2".into(), path: format!("{}black-arrow2.html", base_path), history: false, fiction: false, education: false },
+Book { title: "black-arts-on-trial".into(), path: format!("{}black-arts-on-trial.html", base_path), history: false, fiction: false, education: true },
+Book { title: "black-star".into(), path: format!("{}black-star.html", base_path), history: false, fiction: true, education: false },
+Book { title: "boethiahs-glory".into(), path: format!("{}boethiahs-glory.html", base_path), history: false, fiction: false, education: false },
+Book { title: "book-of-daedra".into(), path: format!("{}book-of-daedra.html", base_path), history: false, fiction: false, education: false },
+Book { title: "book-of-the-dragonborn".into(), path: format!("{}book-of-the-dragonborn.html", base_path), history: false, fiction: false, education: false },
+Book { title: "bravil".into(), path: format!("{}bravil.html", base_path), history: false, fiction: false, education: false },
+Book { title: "breathing-water".into(), path: format!("{}breathing-water.html", base_path), history: false, fiction: false, education: false },
+Book { title: "brief-history-of-the-empire1".into(), path: format!("{}brief-history-of-the-empire1.html", base_path), history: false, fiction: false, education: false },
+Book { title: "brief-history-of-the-empire2".into(), path: format!("{}brief-history-of-the-empire2.html", base_path), history: false, fiction: false, education: false },
+Book { title: "brief-history-of-the-empire3".into(), path: format!("{}brief-history-of-the-empire3.html", base_path), history: true, fiction: false, education: false },
+Book { title: "brief-history-of-the-empire4".into(), path: format!("{}brief-history-of-the-empire4.html", base_path), history: false, fiction: false, education: false },
+Book { title: "brothers-of-darkness".into(), path: format!("{}brothers-of-darkness.html", base_path), history: false, fiction: false, education: false },
+Book { title: "buying-game".into(), path: format!("{}buying-game.html", base_path), history: false, fiction: true, education: true },
+Book { title: "cabin-in-the-woods".into(), path: format!("{}cabin-in-the-woods.html", base_path), history: true, fiction: false, education: false },
+Book { title: "cake-and-the-diamond".into(), path: format!("{}cake-and-the-diamond.html", base_path), history: false, fiction: false, education: false },
+Book { title: "cats-of-skyrim".into(), path: format!("{}cats-of-skyrim.html", base_path), history: false, fiction: false, education: false },
+Book { title: "chances-folly".into(), path: format!("{}chances-folly.html", base_path), history: false, fiction: false, education: true },
+Book { title: "charwich-koniinge-letters1".into(), path: format!("{}charwich-koniinge-letters1.html", base_path), history: true, fiction: true, education: true },
+Book { title: "charwich-koniinge-letters2".into(), path: format!("{}charwich-koniinge-letters2.html", base_path), history: false, fiction: false, education: false },
+Book { title: "charwich-koniinge-letters3".into(), path: format!("{}charwich-koniinge-letters3.html", base_path), history: false, fiction: true, education: false },
+Book { title: "charwich-koniinge-letters4".into(), path: format!("{}charwich-koniinge-letters4.html", base_path), history: false, fiction: false, education: true },
+Book { title: "chaurus-pie".into(), path: format!("{}chaurus-pie.html", base_path), history: false, fiction: false, education: true },
+Book { title: "children-of-the-sky".into(), path: format!("{}children-of-the-sky.html", base_path), history: false, fiction: false, education: false },
+Book { title: "childrens-anuad".into(), path: format!("{}childrens-anuad.html", base_path), history: false, fiction: false, education: false },
+Book { title: "chronicles-of-holy-brothers-of-marukh4".into(), path: format!("{}chronicles-of-holy-brothers-of-marukh4.html", base_path), history: true, fiction: false, education: false },
+Book { title: "chronicles-of-nchuleft".into(), path: format!("{}chronicles-of-nchuleft.html", base_path), history: false, fiction: false, education: false },
+Book { title: "city-of-stone".into(), path: format!("{}city-of-stone.html", base_path), history: false, fiction: true, education: false },
+Book { title: "code-of-malacath".into(), path: format!("{}code-of-malacath.html", base_path), history: false, fiction: false, education: false },
+Book { title: "commentaries-on-the-mysterium-xarxes1".into(), path: format!("{}commentaries-on-the-mysterium-xarxes1.html", base_path), history: false, fiction: false, education: false },
+Book { title: "commentaries-on-the-mysterium-xarxes2".into(), path: format!("{}commentaries-on-the-mysterium-xarxes2.html", base_path), history: true, fiction: false, education: false },
+Book { title: "commentaries-on-the-mysterium-xarxes3".into(), path: format!("{}commentaries-on-the-mysterium-xarxes3.html", base_path), history: false, fiction: false, education: false },
+Book { title: "commentaries-on-the-mysterium-xarxes4".into(), path: format!("{}commentaries-on-the-mysterium-xarxes4.html", base_path), history: false, fiction: false, education: false },
+Book { title: "complete-catalogue-of-enchantments-for-armor".into(), path: format!("{}complete-catalogue-of-enchantments-for-armor.html", base_path), history: true, fiction: false, education: false },
+Book { title: "complete-catalogue-of-enchantments-for-weaponry".into(), path: format!("{}complete-catalogue-of-enchantments-for-weaponry.html", base_path), history: false, fiction: false, education: false },
+Book { title: "concise-account-of-great-war-between-empire-and-aldmeri-dominion".into(), path: format!("{}concise-account-of-great-war-between-empire-and-aldmeri-dominion.html", base_path), history: false, fiction: false, education: false },
+Book { title: "dance-in-the-fire1".into(), path: format!("{}dance-in-the-fire1.html", base_path), history: false, fiction: false, education: false },
+Book { title: "dance-in-the-fire2".into(), path: format!("{}dance-in-the-fire2.html", base_path), history: false, fiction: true, education: false },
+Book { title: "dance-in-the-fire3".into(), path: format!("{}dance-in-the-fire3.html", base_path), history: false, fiction: false, education: false },
+Book { title: "dance-in-the-fire4".into(), path: format!("{}dance-in-the-fire4.html", base_path), history: false, fiction: false, education: false },
+Book { title: "dance-in-the-fire5".into(), path: format!("{}dance-in-the-fire5.html", base_path), history: false, fiction: false, education: true },
+Book { title: "dance-in-the-fire6".into(), path: format!("{}dance-in-the-fire6.html", base_path), history: false, fiction: false, education: false },
+Book { title: "dance-in-the-fire7".into(), path: format!("{}dance-in-the-fire7.html", base_path), history: false, fiction: true, education: false },
+Book { title: "darkest-darkness".into(), path: format!("{}darkest-darkness.html", base_path), history: false, fiction: false, education: false },
+Book { title: "death-blow-of-abernanit".into(), path: format!("{}death-blow-of-abernanit.html", base_path), history: false, fiction: false, education: false },
+Book { title: "death-of-a-wanderer".into(), path: format!("{}death-of-a-wanderer.html", base_path), history: false, fiction: false, education: false },
+Book { title: "markarth-deco-guide".into(), path: format!("{}markarth-deco-guide.html", base_path), history: false, fiction: true, education: false },
+Book { title: "riften-deco-guide".into(), path: format!("{}riften-deco-guide.html", base_path), history: false, fiction: false, education: false },
+Book { title: "solitude-deco-guide".into(), path: format!("{}solitude-deco-guide.html", base_path), history: false, fiction: true, education: false },
+Book { title: "whiterun-deco-guide".into(), path: format!("{}whiterun-deco-guide.html", base_path), history: false, fiction: false, education: false },
+Book { title: "windhelm-deco-guide".into(), path: format!("{}windhelm-deco-guide.html", base_path), history: false, fiction: false, education: false },
+Book { title: "de-rerum-dirennis".into(), path: format!("{}de-rerum-dirennis.html", base_path), history: true, fiction: false, education: false },
+Book { title: "disaster-at-ionith".into(), path: format!("{}disaster-at-ionith.html", base_path), history: false, fiction: false, education: false },
+Book { title: "doors-of-oblivion".into(), path: format!("{}doors-of-oblivion.html", base_path), history: false, fiction: false, education: false },
+Book { title: "dragon-break-reexamined".into(), path: format!("{}dragon-break-reexamined.html", base_path), history: false, fiction: false, education: false },
+Book { title: "dragon-language".into(), path: format!("{}dragon-language.html", base_path), history: false, fiction: false, education: false },
+Book { title: "dragon-war".into(), path: format!("{}dragon-war.html", base_path), history: false, fiction: false, education: false },
+Book { title: "dream-of-sovngarde".into(), path: format!("{}dream-of-sovngarde.html", base_path), history: false, fiction: true, education: false },
+Book { title: "dreamstride".into(), path: format!("{}dreamstride.html", base_path), history: false, fiction: false, education: false },
+Book { title: "dunmer-of-skyrim".into(), path: format!("{}dunmer-of-skyrim.html", base_path), history: false, fiction: false, education: false },
+Book { title: "dwarves-lost-race-of-tamriel1".into(), path: format!("{}dwarves-lost-race-of-tamriel1.html", base_path), history: false, fiction: false, education: false },
+Book { title: "dwarves-lost-race-of-tamriel2".into(), path: format!("{}dwarves-lost-race-of-tamriel2.html", base_path), history: true, fiction: false, education: false },
+Book { title: "dwarves-lost-race-of-tamriel3".into(), path: format!("{}dwarves-lost-race-of-tamriel3.html", base_path), history: false, fiction: false, education: false },
+Book { title: "dwemer-inquiries1".into(), path: format!("{}dwemer-inquiries1.html", base_path), history: false, fiction: false, education: false },
+Book { title: "dwemer-inquiries2".into(), path: format!("{}dwemer-inquiries2.html", base_path), history: false, fiction: false, education: false },
+Book { title: "dwemer-inquiries3".into(), path: format!("{}dwemer-inquiries3.html", base_path), history: false, fiction: true, education: false },
+Book { title: "effects-of-the-elder-scrolls".into(), path: format!("{}effects-of-the-elder-scrolls.html", base_path), history: false, fiction: false, education: false },
+Book { title: "beggar".into(), path: format!("{}beggar.html", base_path), history: false, fiction: false, education: false },
+Book { title: "thief".into(), path: format!("{}thief.html", base_path), history: false, fiction: false, education: false },
+Book { title: "warrior".into(), path: format!("{}warrior.html", base_path), history: false, fiction: true, education: false },
+Book { title: "king".into(), path: format!("{}king.html", base_path), history: false, fiction: false, education: false },
+Book { title: "essays-on-dwemer-history-and-culture1".into(), path: format!("{}essays-on-dwemer-history-and-culture1.html", base_path), history: false, fiction: false, education: false },
+Book { title: "exodus".into(), path: format!("{}exodus.html", base_path), history: false, fiction: false, education: false },
+Book { title: "experimentation-in-the-physicalities-of-the-werewolf".into(), path: format!("{}experimentation-in-the-physicalities-of-the-werewolf.html", base_path), history: false, fiction: false, education: false },
+Book { title: "explorers-guide-to-skyrim".into(), path: format!("{}explorers-guide-to-skyrim.html", base_path), history: false, fiction: true, education: false },
+Book { title: "fall-from-glory".into(), path: format!("{}fall-from-glory.html", base_path), history: true, fiction: false, education: false },
+Book { title: "fall-of-saarthal".into(), path: format!("{}fall-of-saarthal.html", base_path), history: false, fiction: false, education: false },
+Book { title: "fall-of-the-snow-prince".into(), path: format!("{}fall-of-the-snow-prince.html", base_path), history: true, fiction: false, education: false },
+Book { title: "falmer".into(), path: format!("{}falmer.html", base_path), history: false, fiction: false, education: false },
+Book { title: "father-of-the-niben".into(), path: format!("{}father-of-the-niben.html", base_path), history: false, fiction: false, education: false },
+Book { title: "feyfolken1".into(), path: format!("{}feyfolken1.html", base_path), history: false, fiction: false, education: true },
+Book { title: "feyfolken2".into(), path: format!("{}feyfolken2.html", base_path), history: false, fiction: false, education: false },
+Book { title: "feyfolken3".into(), path: format!("{}feyfolken3.html", base_path), history: false, fiction: true, education: false },
+Book { title: "final-lesson".into(), path: format!("{}final-lesson.html", base_path), history: false, fiction: false, education: false },
+Book { title: "fire-and-darkness".into(), path: format!("{}fire-and-darkness.html", base_path), history: true, fiction: false, education: false },
+Book { title: "firmament".into(), path: format!("{}firmament.html", base_path), history: true, fiction: false, education: false },
+Book { title: "firsthold-revolt".into(), path: format!("{}firsthold-revolt.html", base_path), history: true, fiction: false, education: false },
+Book { title: "five-songs-of-king-wulfharth".into(), path: format!("{}five-songs-of-king-wulfharth.html", base_path), history: false, fiction: false, education: false },
+Book { title: "flight-from-the-thalmor".into(), path: format!("{}flight-from-the-thalmor.html", base_path), history: false, fiction: false, education: false },
+Book { title: "forge-hammer-and-anvil".into(), path: format!("{}forge-hammer-and-anvil.html", base_path), history: true, fiction: false, education: false },
+Book { title: "fragment".into(), path: format!("{}fragment.html", base_path), history: false, fiction: true, education: false },
+Book { title: "frontier-conquest-accomodation".into(), path: format!("{}frontier-conquest-accomodation.html", base_path), history: false, fiction: false, education: false },
+Book { title: "galerion-the-mystic".into(), path: format!("{}galerion-the-mystic.html", base_path), history: false, fiction: false, education: false },
+Book { title: "game-at-dinner".into(), path: format!("{}game-at-dinner.html", base_path), history: true, fiction: false, education: false },
+Book { title: "gentlemens-guide-to-whiterun".into(), path: format!("{}gentlemens-guide-to-whiterun.html", base_path), history: false, fiction: false, education: false },
+Book { title: "ghosts-in-the-storm".into(), path: format!("{}ghosts-in-the-storm.html", base_path), history: false, fiction: false, education: false },
+Book { title: "glories-and-laments".into(), path: format!("{}glories-and-laments.html", base_path), history: false, fiction: false, education: false },
+Book { title: "gold-ribbon-of-merit".into(), path: format!("{}gold-ribbon-of-merit.html", base_path), history: true, fiction: false, education: false },
+Book { title: "great-harbingers-of-the-companions".into(), path: format!("{}great-harbingers-of-the-companions.html", base_path), history: false, fiction: false, education: false },
+Book { title: "hallgerds-tale".into(), path: format!("{}hallgerds-tale.html", base_path), history: true, fiction: false, education: false },
+Book { title: "hanging-gardens-of-masten-coridale".into(), path: format!("{}hanging-gardens-of-masten-coridale.html", base_path), history: false, fiction: false, education: false },
+Book { title: "harvesting-frostbite-spider-venom".into(), path: format!("{}harvesting-frostbite-spider-venom.html", base_path), history: false, fiction: false, education: false },
+Book { title: "heavy-armor-forging".into(), path: format!("{}heavy-armor-forging.html", base_path), history: true, fiction: false, education: false },
+Book { title: "herbalists-guide-to-skyrim".into(), path: format!("{}herbalists-guide-to-skyrim.html", base_path), history: false, fiction: false, education: false },
+Book { title: "herbanes-beastiary1".into(), path: format!("{}herbanes-beastiary1.html", base_path), history: false, fiction: true, education: false },
+Book { title: "herbanes-beastiary2".into(), path: format!("{}herbanes-beastiary2.html", base_path), history: false, fiction: false, education: false },
+Book { title: "herbanes-beastiary3".into(), path: format!("{}herbanes-beastiary3.html", base_path), history: true, fiction: false, education: false },
+Book { title: "holds-of-skyrim".into(), path: format!("{}holds-of-skyrim.html", base_path), history: true, fiction: false, education: false },
+Book { title: "hope-of-the-redoran".into(), path: format!("{}hope-of-the-redoran.html", base_path), history: false, fiction: true, education: false },
+Book { title: "horror-of-castle-xyr".into(), path: format!("{}horror-of-castle-xyr.html", base_path), history: false, fiction: false, education: false },
+Book { title: "how-orsinium-passed-to-the-orcs".into(), path: format!("{}how-orsinium-passed-to-the-orcs.html", base_path), history: true, fiction: false, education: false },
+Book { title: "hypothetical-treachery".into(), path: format!("{}hypothetical-treachery.html", base_path), history: false, fiction: false, education: false },
+Book { title: "ice-and-chitin".into(), path: format!("{}ice-and-chitin.html", base_path), history: false, fiction: false, education: false },
+Book { title: "immortal-blood".into(), path: format!("{}immortal-blood.html", base_path), history: false, fiction: false, education: false },
+Book { title: "incident-in-necrom".into(), path: format!("{}incident-in-necrom.html", base_path), history: false, fiction: false, education: false },
+Book { title: "interviews-with-tapestrists18".into(), path: format!("{}interviews-with-tapestrists18.html", base_path), history: false, fiction: true, education: false },
+Book { title: "invocation-of-azura".into(), path: format!("{}invocation-of-azura.html", base_path), history: false, fiction: false, education: false },
+Book { title: "journal-of-gallus-desidenius".into(), path: format!("{}journal-of-gallus-desidenius.html", base_path), history: false, fiction: true, education: false },
+Book { title: "keepers-of-the-razor".into(), path: format!("{}keepers-of-the-razor.html", base_path), history: false, fiction: true, education: false },
+Book { title: "killing".into(), path: format!("{}killing.html", base_path), history: false, fiction: true, education: false },
+Book { title: "kiss-sweet-mother".into(), path: format!("{}kiss-sweet-mother.html", base_path), history: true, fiction: false, education: false },
+Book { title: "knights-of-the-nine".into(), path: format!("{}knights-of-the-nine.html", base_path), history: true, fiction: false, education: false },
+Book { title: "kolb-and-the-dragon".into(), path: format!("{}kolb-and-the-dragon.html", base_path), history: false, fiction: true, education: false },
+Book { title: "lady-benochs-words-and-philosophy".into(), path: format!("{}lady-benochs-words-and-philosophy.html", base_path), history: false, fiction: false, education: false },
+Book { title: "last-king-of-ayleids".into(), path: format!("{}last-king-of-ayleids.html", base_path), history: false, fiction: true, education: false },
+Book { title: "last-scabbard".into(), path: format!("{}last-scabbard.html", base_path), history: false, fiction: false, education: false },
+Book { title: "legendary-city-of-sancre-tor".into(), path: format!("{}legendary-city-of-sancre-tor.html", base_path), history: true, fiction: false, education: false },
+Book { title: "legendary-scourge".into(), path: format!("{}legendary-scourge.html", base_path), history: false, fiction: false, education: false },
+Book { title: "legend-of-red-eagle".into(), path: format!("{}legend-of-red-eagle.html", base_path), history: false, fiction: false, education: true },
+Book { title: "legend-of-the-krately-house".into(), path: format!("{}legend-of-the-krately-house.html", base_path), history: false, fiction: false, education: false },
+Book { title: "light-armor-forging".into(), path: format!("{}light-armor-forging.html", base_path), history: false, fiction: false, education: true },
+Book { title: "liminal-bridges".into(), path: format!("{}liminal-bridges.html", base_path), history: false, fiction: false, education: false },
+Book { title: "locked-room".into(), path: format!("{}locked-room.html", base_path), history: false, fiction: false, education: false },
+Book { title: "lord-jornibrets-last-dance".into(), path: format!("{}lord-jornibrets-last-dance.html", base_path), history: false, fiction: true, education: false },
+Book { title: "lost-legends-of-skyrim".into(), path: format!("{}lost-legends-of-skyrim.html", base_path), history: false, fiction: false, education: false },
+Book { title: "lunar-lorkhan".into(), path: format!("{}lunar-lorkhan.html", base_path), history: false, fiction: false, education: false },
+Book { title: "lusty-argonian-maid1".into(), path: format!("{}lusty-argonian-maid1.html", base_path), history: false, fiction: true, education: false },
+Book { title: "lusty-argonian-maid2".into(), path: format!("{}lusty-argonian-maid2.html", base_path), history: false, fiction: false, education: false },
+Book { title: "lycanthropic-legends-of-skyrim".into(), path: format!("{}lycanthropic-legends-of-skyrim.html", base_path), history: true, fiction: false, education: false },
+Book { title: "mace-etiquette".into(), path: format!("{}mace-etiquette.html", base_path), history: false, fiction: false, education: false },
+Book { title: "madmen-of-the-reach".into(), path: format!("{}madmen-of-the-reach.html", base_path), history: false, fiction: true, education: false },
+Book { title: "madness-of-pelagius".into(), path: format!("{}madness-of-pelagius.html", base_path), history: false, fiction: false, education: false },
+Book { title: "magic-from-the-sky".into(), path: format!("{}magic-from-the-sky.html", base_path), history: false, fiction: false, education: false },
+Book { title: "mannimarco".into(), path: format!("{}mannimarco.html", base_path), history: false, fiction: false, education: false },
+Book { title: "marksmanship-lesson".into(), path: format!("{}marksmanship-lesson.html", base_path), history: false, fiction: false, education: false },
+Book { title: "mirror".into(), path: format!("{}mirror.html", base_path), history: false, fiction: false, education: false },
+Book { title: "monomyth".into(), path: format!("{}monomyth.html", base_path), history: false, fiction: false, education: false },
+Book { title: "mysterious-akavir".into(), path: format!("{}mysterious-akavir.html", base_path), history: false, fiction: false, education: false },
+Book { title: "mystery-of-princess-talara1".into(), path: format!("{}mystery-of-princess-talara1.html", base_path), history: false, fiction: false, education: false },
+Book { title: "mystery-of-princess-talara2".into(), path: format!("{}mystery-of-princess-talara2.html", base_path), history: false, fiction: false, education: false },
+Book { title: "mystery-of-princess-talara3".into(), path: format!("{}mystery-of-princess-talara3.html", base_path), history: false, fiction: false, education: false },
+Book { title: "mystery-of-princess-talara5".into(), path: format!("{}mystery-of-princess-talara5.html", base_path), history: false, fiction: false, education: false },
+Book { title: "myths-of-sheogorath".into(), path: format!("{}myths-of-sheogorath.html", base_path), history: false, fiction: false, education: false },
+Book { title: "nerevar-moon-and-star".into(), path: format!("{}nerevar-moon-and-star.html", base_path), history: false, fiction: false, education: false },
+Book { title: "ngasta-kvata-kvakis".into(), path: format!("{}ngasta-kvata-kvakis.html", base_path), history: false, fiction: false, education: false },
+Book { title: "night-falls-on-sentinel".into(), path: format!("{}night-falls-on-sentinel.html", base_path), history: false, fiction: false, education: false },
+Book { title: "nightingales1".into(), path: format!("{}nightingales1.html", base_path), history: false, fiction: false, education: false },
+Book { title: "nightingales2".into(), path: format!("{}nightingales2.html", base_path), history: false, fiction: false, education: false },
+Book { title: "nightingales-fact-or-fiction".into(), path: format!("{}nightingales-fact-or-fiction.html", base_path), history: false, fiction: false, education: false },
+Book { title: "night-mothers-truth".into(), path: format!("{}night-mothers-truth.html", base_path), history: false, fiction: false, education: false },
+Book { title: "nirnroot-missive".into(), path: format!("{}nirnroot-missive.html", base_path), history: false, fiction: false, education: false },
+Book { title: "nords-arise".into(), path: format!("{}nords-arise.html", base_path), history: false, fiction: false, education: false },
+Book { title: "nords-of-skyrim".into(), path: format!("{}nords-of-skyrim.html", base_path), history: false, fiction: false, education: false },
+Book { title: "notes-on-racial-phlogeny-and-biology".into(), path: format!("{}notes-on-racial-phlogeny-and-biology.html", base_path), history: false, fiction: false, education: false },
+Book { title: "oblivion-crisis".into(), path: format!("{}oblivion-crisis.html", base_path), history: false, fiction: false, education: false },
+Book { title: "ode-to-the-tundrastriders".into(), path: format!("{}ode-to-the-tundrastriders.html", base_path), history: false, fiction: false, education: false },
+Book { title: "of-crossed-daggers".into(), path: format!("{}of-crossed-daggers.html", base_path), history: false, fiction: false, education: false },
+Book { title: "of-fjori-and-holgeir".into(), path: format!("{}of-fjori-and-holgeir.html", base_path), history: false, fiction: false, education: false },
+Book { title: "olaf-and-the-dragon".into(), path: format!("{}olaf-and-the-dragon.html", base_path), history: false, fiction: false, education: false },
+Book { title: "old-ways".into(), path: format!("{}old-ways.html", base_path), history: false, fiction: false, education: false },
+Book { title: "on-artaeum".into(), path: format!("{}on-artaeum.html", base_path), history: false, fiction: false, education: false },
+Book { title: "on-oblivion".into(), path: format!("{}on-oblivion.html", base_path), history: false, fiction: false, education: false },
+Book { title: "on-stepping-lightly".into(), path: format!("{}on-stepping-lightly.html", base_path), history: false, fiction: false, education: false },
+Book { title: "on-the-great-collapse".into(), path: format!("{}on-the-great-collapse.html", base_path), history: false, fiction: false, education: false },
+Book { title: "opusculus-lamae-bal-ta-mezzamortie".into(), path: format!("{}opusculus-lamae-bal-ta-mezzamortie.html", base_path), history: false, fiction: false, education: false },
+Book { title: "overview-of-gods-and-worship-in-tamriel".into(), path: format!("{}overview-of-gods-and-worship-in-tamriel.html", base_path), history: false, fiction: false, education: false },
+Book { title: "palla1".into(), path: format!("{}palla1.html", base_path), history: false, fiction: false, education: false },
+Book { title: "palla2".into(), path: format!("{}palla2.html", base_path), history: false, fiction: false, education: false },
+Book { title: "pension-of-the-ancestor-moth".into(), path: format!("{}pension-of-the-ancestor-moth.html", base_path), history: false, fiction: false, education: false },
+Book { title: "pig-children".into(), path: format!("{}pig-children.html", base_path), history: false, fiction: false, education: false },
+Book { title: "posting-of-the-hunt".into(), path: format!("{}posting-of-the-hunt.html", base_path), history: false, fiction: false, education: false },
+Book { title: "primer-on-enchanting".into(), path: format!("{}primer-on-enchanting.html", base_path), history: false, fiction: false, education: false },
+Book { title: "proper-lock-design-and-construction".into(), path: format!("{}proper-lock-design-and-construction.html", base_path), history: false, fiction: false, education: false },
+Book { title: "purloined-shadows".into(), path: format!("{}purloined-shadows.html", base_path), history: false, fiction: false, education: false },
+Book { title: "read-guard".into(), path: format!("{}read-guard.html", base_path), history: false, fiction: false, education: false },
+Book { title: "real-barenziah1".into(), path: format!("{}real-barenziah1.html", base_path), history: false, fiction: false, education: false },
+Book { title: "real-barenziah2".into(), path: format!("{}real-barenziah2.html", base_path), history: false, fiction: false, education: false },
+Book { title: "real-barenziah3".into(), path: format!("{}real-barenziah3.html", base_path), history: false, fiction: false, education: false },
+Book { title: "real-barenziah4".into(), path: format!("{}real-barenziah4.html", base_path), history: false, fiction: false, education: false },
+Book { title: "real-barenziah5".into(), path: format!("{}real-barenziah5.html", base_path), history: false, fiction: false, education: false },
+Book { title: "reality-and-other-falsehoods".into(), path: format!("{}reality-and-other-falsehoods.html", base_path), history: false, fiction: false, education: false },
+Book { title: "red-book-of-riddles".into(), path: format!("{}red-book-of-riddles.html", base_path), history: false, fiction: false, education: false },
+Book { title: "red-kitchen-reader".into(), path: format!("{}red-kitchen-reader.html", base_path), history: false, fiction: false, education: false },
+Book { title: "refugees".into(), path: format!("{}refugees.html", base_path), history: false, fiction: false, education: false },
+Book { title: "remanada".into(), path: format!("{}remanada.html", base_path), history: false, fiction: false, education: false },
+Book { title: "response-to-beros-speech".into(), path: format!("{}response-to-beros-speech.html", base_path), history: false, fiction: false, education: false },
+Book { title: "rise-and-fall-of-the-blades".into(), path: format!("{}rise-and-fall-of-the-blades.html", base_path), history: false, fiction: false, education: false },
+Book { title: "rising-threat1".into(), path: format!("{}rising-threat1.html", base_path), history: false, fiction: false, education: false },
+Book { title: "rising-threat2".into(), path: format!("{}rising-threat2.html", base_path), history: false, fiction: false, education: false },
+Book { title: "rising-threat3".into(), path: format!("{}rising-threat3.html", base_path), history: false, fiction: false, education: false },
+Book { title: "rising-threat4".into(), path: format!("{}rising-threat4.html", base_path), history: false, fiction: false, education: false },
+Book { title: "rislav-the-righteous".into(), path: format!("{}rislav-the-righteous.html", base_path), history: false, fiction: false, education: false },
+Book { title: "ruins-of-kemel-ze".into(), path: format!("{}ruins-of-kemel-ze.html", base_path), history: false, fiction: false, education: false },
+Book { title: "sacred-witness".into(), path: format!("{}sacred-witness.html", base_path), history: false, fiction: false, education: false },
+Book { title: "scourge-of-the-gray-quarter".into(), path: format!("{}scourge-of-the-gray-quarter.html", base_path), history: false, fiction: false, education: false },
+Book { title: "shadowmarks".into(), path: format!("{}shadowmarks.html", base_path), history: false, fiction: false, education: false },
+Book { title: "shezarr-and-the-divines".into(), path: format!("{}shezarr-and-the-divines.html", base_path), history: false, fiction: false, education: false },
+Book { title: "short-history-of-morrowind".into(), path: format!("{}short-history-of-morrowind.html", base_path), history: false, fiction: false, education: false },
+Book { title: "short-life-of-uriel-septim-vii".into(), path: format!("{}short-life-of-uriel-septim-vii.html", base_path), history: false, fiction: false, education: false },
+Book { title: "sinderions-field-journal".into(), path: format!("{}sinderions-field-journal.html", base_path), history: false, fiction: false, education: false },
+Book { title: "sithis".into(), path: format!("{}sithis.html", base_path), history: false, fiction: false, education: false },
+
+Book { title: "skyrims-rule".into(), path: format!("{}skyrims-rule.html", base_path), history: false, fiction: false, education: false },
+Book { title: "song-of-hrormir".into(), path: format!("{}song-of-hrormir.html", base_path), history: false, fiction: false, education: false },
+Book { title: "song-of-pelinal1".into(), path: format!("{}song-of-pelinal1.html", base_path), history: false, fiction: false, education: false },
+Book { title: "song-of-pelinal2".into(), path: format!("{}song-of-pelinal2.html", base_path), history: false, fiction: false, education: false },
+Book { title: "song-of-pelinal3".into(), path: format!("{}song-of-pelinal3.html", base_path), history: false, fiction: false, education: false },
+Book { title: "song-of-pelinal4".into(), path: format!("{}song-of-pelinal4.html", base_path), history: false, fiction: false, education: false },
+Book { title: "song-of-pelinal5".into(), path: format!("{}song-of-pelinal5.html", base_path), history: false, fiction: false, education: false },
+Book { title: "song-of-pelinal6".into(), path: format!("{}song-of-pelinal6.html", base_path), history: false, fiction: false, education: false },
+Book { title: "song-of-pelinal7".into(), path: format!("{}song-of-pelinal7.html", base_path), history: false, fiction: false, education: false },
+Book { title: "song-of-pelinal8".into(), path: format!("{}song-of-pelinal8.html", base_path), history: false, fiction: false, education: false },
+Book { title: "song-of-the-askelde-men".into(), path: format!("{}song-of-the-askelde-men.html", base_path), history: false, fiction: false, education: false },
+Book { title: "songs-of-skyrim".into(), path: format!("{}songs-of-skyrim.html", base_path), history: false, fiction: false, education: false },
+Book { title: "songs-of-skyrim-revised".into(), path: format!("{}songs-of-skyrim-revised.html", base_path), history: false, fiction: false, education: false },
+Book { title: "songs-of-the-return2".into(), path: format!("{}songs-of-the-return2.html", base_path), history: false, fiction: false, education: false },
+Book { title: "songs-of-the-return7".into(), path: format!("{}songs-of-the-return7.html", base_path), history: false, fiction: false, education: false },
+Book { title: "songs-of-the-return19".into(), path: format!("{}songs-of-the-return19.html", base_path), history: false, fiction: false, education: false },
+Book { title: "songs-of-the-return24".into(), path: format!("{}songs-of-the-return24.html", base_path), history: false, fiction: false, education: false },
+Book { title: "songs-of-the-return56".into(), path: format!("{}songs-of-the-return56.html", base_path), history: false, fiction: false, education: false },
+Book { title: "souls-black-and-white".into(), path: format!("{}souls-black-and-white.html", base_path), history: false, fiction: false, education: false },
+Book { title: "sovngarde-a-reexamination".into(), path: format!("{}sovngarde-a-reexamination.html", base_path), history: false, fiction: false, education: false },
+Book { title: "spirit-of-nirn".into(), path: format!("{}spirit-of-nirn.html", base_path), history: false, fiction: false, education: false },
+Book { title: "spirit-of-the-daedra".into(), path: format!("{}spirit-of-the-daedra.html", base_path), history: false, fiction: false, education: false },
+Book { title: "surfeit-of-thieves".into(), path: format!("{}surfeit-of-thieves.html", base_path), history: false, fiction: false, education: false },
+Book { title: "surviving-a-horker-attack".into(), path: format!("{}surviving-a-horker-attack.html", base_path), history: false, fiction: false, education: false },
+Book { title: "tale-of-dro-zira".into(), path: format!("{}tale-of-dro-zira.html", base_path), history: false, fiction: false, education: false },
+Book { title: "tales-of-dwemer01".into(), path: format!("{}tales-of-dwemer01.html", base_path), history: false, fiction: false, education: false },
+Book { title: "tales-of-dwemer02".into(), path: format!("{}tales-of-dwemer02.html", base_path), history: false, fiction: false, education: false },
+Book { title: "tales-of-dwemer03".into(), path: format!("{}tales-of-dwemer03.html", base_path), history: false, fiction: false, education: false },
+Book { title: "tales-of-dwemer05".into(), path: format!("{}tales-of-dwemer05.html", base_path), history: false, fiction: false, education: false },
+Book { title: "tales-of-dwemer06".into(), path: format!("{}tales-of-dwemer06.html", base_path), history: false, fiction: false, education: false },
+Book { title: "tales-of-dwemer09".into(), path: format!("{}tales-of-dwemer09.html", base_path), history: false, fiction: false, education: false },
+Book { title: "tales-of-dwemer10".into(), path: format!("{}tales-of-dwemer10.html", base_path), history: false, fiction: false, education: false },
+Book { title: "talos-mistake".into(), path: format!("{}talos-mistake.html", base_path), history: false, fiction: false, education: false },
+Book { title: "there-be-dragons".into(), path: format!("{}there-be-dragons.html", base_path), history: false, fiction: false, education: false },
+Book { title: "thief-of-virtue".into(), path: format!("{}thief-of-virtue.html", base_path), history: false, fiction: false, education: false },
+Book { title: "third-door".into(), path: format!("{}third-door.html", base_path), history: false, fiction: false, education: false },
+Book { title: "third-era-abbrevated-timeline".into(), path: format!("{}third-era-abbrevated-timeline.html", base_path), history: false, fiction: false, education: false },
+Book { title: "three-thieves".into(), path: format!("{}three-thieves.html", base_path), history: false, fiction: false, education: false },
+Book { title: "timeline-series1".into(), path: format!("{}timeline-series1.html", base_path), history: false, fiction: false, education: false },
+Book { title: "tragedy-in-black".into(), path: format!("{}tragedy-in-black.html", base_path), history: false, fiction: false, education: false },
+Book { title: "treatise-on-ayleidic-cities".into(), path: format!("{}treatise-on-ayleidic-cities.html", base_path), history: false, fiction: false, education: false },
+Book { title: "trials-of-st-alessia".into(), path: format!("{}trials-of-st-alessia.html", base_path), history: false, fiction: false, education: false },
+Book { title: "troll-slaying".into(), path: format!("{}troll-slaying.html", base_path), history: false, fiction: false, education: false },
+Book { title: "true-nature-of-orcs".into(), path: format!("{}true-nature-of-orcs.html", base_path), history: false, fiction: false, education: false },
+Book { title: "twin-secrets".into(), path: format!("{}twin-secrets.html", base_path), history: false, fiction: false, education: false },
+Book { title: "uncommon-taste".into(), path: format!("{}uncommon-taste.html", base_path), history: false, fiction: false, education: false },
+Book { title: "varieties-of-daedra".into(), path: format!("{}varieties-of-daedra.html", base_path), history: false, fiction: false, education: false },
+Book { title: "vernaccus-and-bourlor".into(), path: format!("{}vernaccus-and-bourlor.html", base_path), history: false, fiction: false, education: false },
+Book { title: "wabbajack".into(), path: format!("{}wabbajack.html", base_path), history: false, fiction: false, education: false },
+Book { title: "walking-the-world9".into(), path: format!("{}walking-the-world9.html", base_path), history: false, fiction: false, education: false },
+Book { title: "war-of-the-first-council".into(), path: format!("{}war-of-the-first-council.html", base_path), history: false, fiction: false, education: false },
+Book { title: "warriors-charge".into(), path: format!("{}warriors-charge.html", base_path), history: false, fiction: false, education: false },
+Book { title: "watcher-of-stones".into(), path: format!("{}watcher-of-stones.html", base_path), history: false, fiction: false, education: false },
+Book { title: "waters-of-oblivion".into(), path: format!("{}waters-of-oblivion.html", base_path), history: false, fiction: false, education: false },
+Book { title: "wild-elves".into(), path: format!("{}wild-elves.html", base_path), history: false, fiction: false, education: false },
+Book { title: "windhelm-letters".into(), path: format!("{}windhelm-letters.html", base_path), history: false, fiction: false, education: false },
+Book { title: "wispmother".into(), path: format!("{}wispmother.html", base_path), history: false, fiction: false, education: false },
+Book { title: "withershins".into(), path: format!("{}withershins.html", base_path), history: false, fiction: false, education: false },
+Book { title: "wolf-queen1".into(), path: format!("{}wolf-queen1.html", base_path), history: false, fiction: false, education: false },
+Book { title: "wolf-queen2".into(), path: format!("{}wolf-queen2.html", base_path), history: false, fiction: false, education: false },
+Book { title: "wolf-queen3".into(), path: format!("{}wolf-queen3.html", base_path), history: false, fiction: false, education: false },
+Book { title: "wolf-queen4".into(), path: format!("{}wolf-queen4.html", base_path), history: false, fiction: false, education: false },
+Book { title: "wolf-queen".into(), path: format!("{}wolf-queen.html", base_path), history: false, fiction: false, education: false },
+Book { title: "wolf-queen6".into(), path: format!("{}wolf-queen6.html", base_path), history: false, fiction: false, education: false },
+Book { title: "wolf-queen7".into(), path: format!("{}wolf-queen7.html", base_path), history: false, fiction: false, education: false },
+Book { title: "wolf-queen8".into(), path: format!("{}wolf-queen8.html", base_path), history: false, fiction: false, education: false },
+Book { title: "woodcutters-wife1".into(), path: format!("{}woodcutters-wife1.html", base_path), history: false, fiction: false, education: false },
+Book { title: "words-of-clan-mother-ahnissi".into(), path: format!("{}words-of-clan-mother-ahnissi.html", base_path), history: false, fiction: false, education: false },
+Book { title: "wraiths-wedding-dowry".into(), path: format!("{}wraiths-wedding-dowry.html", base_path), history: false, fiction: false, education: false },
+Book { title: "wulfmares-guide-to-better-thieving".into(), path: format!("{}wulfmares-guide-to-better-thieving.html", base_path), history: false, fiction: false, education: false },
+Book { title: "yellow-book-of-riddles".into(), path: format!("{}yellow-book-of-riddles.html", base_path), history: false, fiction: false, education: false },
+Book { title: "yngol-and-the-sea-ghosts".into(), path: format!("{}yngol-and-the-sea-ghosts.html", base_path), history: false, fiction: false, education: false },
+
+    ];
+    return books  ;
+}
