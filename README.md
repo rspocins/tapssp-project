@@ -1,5 +1,6 @@
 # tapssp-project
 A small Rust project that lets you type the name of a book from **The Elder Scrolls V: Skyrim** and automatically opens that book (stored as an HTML file) in your default web browser.
+https://www.youtube.com/watch?v=CQsWZL34YPM- link to proj working.
 
 
 Under the hood, it uses a **MySQL** database to store:
