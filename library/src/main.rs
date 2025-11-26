@@ -15,6 +15,10 @@ struct Book {
     fiction: bool,
     education: bool,
 }
+// TO DO 
+
+// STAY OPEN AFTER OPENING BOOK
+// TRACK SECONDS READ
 
 
 
@@ -31,6 +35,8 @@ fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
  println!(" welcome to the Library of Tamriel! ");
 
 // list all books in the library
+while true {
+
 
 println!(" here are your options: \n (1) browser by genre \n (2) enter the title of the book you would like to read\n (3) QUIT ");
 println!(" please enter genre or title or quit");
@@ -52,13 +58,11 @@ let mut input:String = readStdIN();
     //mini split 
 
 
-
-
 if (input.trim().contains("1"))|| (input.trim().to_lowercase().contains("genre" )  )    {
 
     // genre selection
 
-    println!(" please select a genre: \n  history \n  fiction \n education ");
+    println!("Please select a genre: \n  History \n  Fiction \n  Education ");
     let mut genre_input:String = readStdIN();
      customerQuery = match genre_input.trim().to_lowercase().as_str() {
         "history" => "SELECT Title FROM library WHERE History = true ORDER BY Title".to_string(),
@@ -66,11 +70,10 @@ if (input.trim().contains("1"))|| (input.trim().to_lowercase().contains("genre" 
         "education" => "SELECT Title FROM library WHERE Education = true ORDER BY Title".to_string(),
         _ => {
             println!(" invalid genre selection ");
-            return Ok(());
+        
         }
-
     };
- 
+
     // Map each row (single column) to String
     let mut titles: Vec<String> = conn.query_map(
         &customerQuery,
@@ -132,7 +135,7 @@ if (input.trim().contains("1"))|| (input.trim().to_lowercase().contains("genre" 
     println!("Quitting the program.");
     return Ok(());
 }else{
-    println!(" invalid selection ");}
+    println!("  invalid selection ");}
 
 
 // and were back /
@@ -177,6 +180,7 @@ println!(" opening book at path: {}", selected_path);
     }
 
 }
+}// end while true
     Ok(())
 
 }

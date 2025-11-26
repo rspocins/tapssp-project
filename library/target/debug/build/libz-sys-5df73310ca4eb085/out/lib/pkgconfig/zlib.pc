@@ -1,4 +1,4 @@
-prefix=C:\Users\Administrator\Desktop\taspbp\tapssp-project\library\target\debug\build\libz-sys-5df73310ca4eb085\out
+prefix=C:\Users\Administrator\Desktop\tapssp-project\library\target\debug\build\libz-sys-5df73310ca4eb085\out
 exec_prefix=@exec_prefix@
 libdir=${prefix}/lib
 sharedlibdir=@sharedlibdir@

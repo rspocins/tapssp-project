@@ -20,7 +20,7 @@ cargo:rerun-if-env-changed=WindowsSDKVersion
 WindowsSDKVersion = None
 cargo:rerun-if-env-changed=LIB
 LIB = None
-PATH = Some(C:\Users\Administrator\Desktop\taspbp\tapssp-project\library\target\debug\deps;C:\Users\Administrator\Desktop\taspbp\tapssp-project\library\target\debug;C:\Users\Administrator\.rustup\toolchains\nightly-x86_64-pc-windows-msvc\lib\rustlib\x86_64-pc-windows-msvc\lib;C:\Program Files\Microsoft\jdk-17.0.16.8-hotspot\bin;C:\Program Files\Microsoft\jdk-17.0.16.8-hotspot\\bin;C:\windows\system32;C:\windows;C:\windows\System32\Wbem;C:\windows\System32\WindowsPowerShell\v1.0\;C:\windows\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\Program Files\GitHub CLI\;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;C:\Users\Administrator\.cargo\bin;C:\Users\Administrator\AppData\Local\Microsoft\WindowsApps;C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2025.2\bin;C:\Users\Administrator\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\Administrator\AppData\Local\gitkraken\bin;C:\Users\Administrator\AppData\Local\Python\bin;C:\Users\Administrator\.rustup\toolchains\nightly-x86_64-pc-windows-msvc\bin)
+PATH = Some(C:\Users\Administrator\Desktop\tapssp-project\library\target\debug\deps;C:\Users\Administrator\Desktop\tapssp-project\library\target\debug;C:\Users\Administrator\.rustup\toolchains\nightly-x86_64-pc-windows-msvc\lib\rustlib\x86_64-pc-windows-msvc\lib;C:\Program Files\Microsoft\jdk-17.0.16.8-hotspot\bin;C:\Program Files\Microsoft\jdk-17.0.16.8-hotspot\\bin;C:\windows\system32;C:\windows;C:\windows\System32\Wbem;C:\windows\System32\WindowsPowerShell\v1.0\;C:\windows\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\Program Files\GitHub CLI\;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;C:\Users\Administrator\.cargo\bin;C:\Users\Administrator\AppData\Local\Microsoft\WindowsApps;C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2025.2\bin;C:\Users\Administrator\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\Administrator\AppData\Local\gitkraken\bin;C:\Users\Administrator\AppData\Local\Python\bin;C:\Users\Administrator\.rustup\toolchains\nightly-x86_64-pc-windows-msvc\bin)
 cargo:rerun-if-env-changed=INCLUDE
 INCLUDE = None
 HOST = Some(x86_64-pc-windows-msvc)
@@ -73,7 +73,7 @@ ARFLAGS_x86_64_pc_windows_msvc = None
 cargo:rerun-if-env-changed=ARFLAGS_x86_64-pc-windows-msvc
 ARFLAGS_x86_64-pc-windows-msvc = None
 cargo:rustc-link-lib=static=z
-cargo:rustc-link-search=native=C:\Users\Administrator\Desktop\taspbp\tapssp-project\library\target\debug\build\libz-sys-5df73310ca4eb085\out\lib
-cargo:root=C:\Users\Administrator\Desktop\taspbp\tapssp-project\library\target\debug\build\libz-sys-5df73310ca4eb085\out
-cargo:rustc-link-search=native=C:\Users\Administrator\Desktop\taspbp\tapssp-project\library\target\debug\build\libz-sys-5df73310ca4eb085\out\lib
-cargo:include=C:\Users\Administrator\Desktop\taspbp\tapssp-project\library\target\debug\build\libz-sys-5df73310ca4eb085\out/include
+cargo:rustc-link-search=native=C:\Users\Administrator\Desktop\tapssp-project\library\target\debug\build\libz-sys-5df73310ca4eb085\out\lib
+cargo:root=C:\Users\Administrator\Desktop\tapssp-project\library\target\debug\build\libz-sys-5df73310ca4eb085\out
+cargo:rustc-link-search=native=C:\Users\Administrator\Desktop\tapssp-project\library\target\debug\build\libz-sys-5df73310ca4eb085\out\lib
+cargo:include=C:\Users\Administrator\Desktop\tapssp-project\library\target\debug\build\libz-sys-5df73310ca4eb085\out/include
